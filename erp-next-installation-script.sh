@@ -82,14 +82,14 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install git libmariadb-dev-compat redis-server libmariadb-dev mariadb-server mariadb-client pkg-config xvfb libfontconfig cron curl build-essential gcc certbot python3-certbot-nginx ansible -y
 
 read -p "Let's Update the system first. Please hit Enter to start..."
-echo $passwrd | sudo -S apt-get update -y
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt-get upgrade -y
+sudo apt-get update -y
+sudo NEEDRESTART_MODE=a apt-get upgrade -y
 read -p "Now, we'll install some prerequisites. Please hit Enter to start..."
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt -qq install nano git curl -y
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt -qq install python3-dev python3.10-dev python3-pip -y
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt -qq install python3.10-venv -y
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt -qq install cron software-properties-common mariadb-client mariadb-server -y
-echo $passwrd | sudo -S NEEDRESTART_MODE=a apt -qq install supervisor redis-server xvfb libfontconfig wkhtmltopdf -y
+sudo NEEDRESTART_MODE=a apt -qq install nano git curl -y
+sudo NEEDRESTART_MODE=a apt -qq install python3-dev python3.10-dev python3-pip -y
+sudo NEEDRESTART_MODE=a apt -qq install python3.10-venv -y
+sudo NEEDRESTART_MODE=a apt -qq install cron software-properties-common mariadb-client mariadb-server -y
+sudo NEEDRESTART_MODE=a apt -qq install supervisor redis-server xvfb libfontconfig wkhtmltopdf -y
 MARKER_FILE=~/.MariaDB_handled.marker
 if [ ! -f "$MARKER_FILE" ]; then
 export mariadb_password;
