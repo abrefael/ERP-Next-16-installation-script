@@ -11,7 +11,7 @@ NC='\033[0m'
 
 
 cat << EOF
-This script was created to easily deploy Frappe-bench and\or ERP-Next 16 on a clean Debian 13+ or Ubuntu 24.04+ server
+This script was created to easily deploy Frappe-bench and\or ERP-Next 16 on a clean Debian 13+ or Ubuntu 24.04+ server.
 You are required to have a frappe-dedicated user and the ability to SSH to your server with this user. In addition, the frappe-dedicated user, should have sudo permissions on the server. If you have the above we will guide you through the setup process.
 The process is constructed of a few parts:
 
