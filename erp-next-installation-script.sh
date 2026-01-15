@@ -71,7 +71,9 @@ if [ "$ans" = "n" ]; then
  echo -e "What is your time zone? (e.g.: Africa/Ceuta)\n (Hint: if you don't know your time zone identifier, checkout the following Wikipedia page:\nhttps://en.wikipedia.org/wiki/List_of_tz_database_time_zones)"
  read -p "" timez
  timedatectl set-timezone "$timez"
-fi 
+fi
+
+
 ans=""
 prompt_for_mariadb_password
 prompt_for_admin_password
@@ -129,9 +131,6 @@ bench init frappe-bench --frappe-branch version-16 --python python3.14
 .local/share/uv/tools/frappe-bench/bin/python -m ensurepip
 chmod -R o+rx .
 cd frappe-bench/
-read -p "Frappe is initialized. Would you like to continue to create a site? (Y/n) " ans
-if [ $ans = "n" ]; then exit 0; fi 
-ans=""
 export admin_password
 bench new-site "$newSite" --admin-password "$admin_password" --set-default --db-root-username "root" --db-root-password "$mariadb_password"
 
@@ -177,6 +176,21 @@ if ! grep -q "log_format main" "$file"; then
     }1' "$file" | sudo tee "$file".tmp > /dev/null && sudo mv "$file".tmp "$file"
     echo "log_format main inserted into $file"
 fi
+loc=$(locale | grep LANG=)
+if [[ $loc == *".UTF-8"* ]]; then
+    echo "Locales are set correctly for production."
+else
+    IFS='=' read -a array <<< "$loc"
+    loc=${array[-1]}
+    if [[ $loc == *"."* ]]; then
+        IFS='=' read -a array <<< "$loc"
+        loc=${array[0]}
+    sudo locale-gen $loc.UTF-8
+    sudo localectl set-locale LANG=$loc.UTF-8
+    echo "export LANG=$loc.UTF-8" >> ~/.bashrc
+    source .bashrc
+fi
+
 export PATH=/usr/sbin:/usr/bin:$PATH
 sudo env "PATH=/home/$USER/.local/bin:$PATH" bench setup production $USER
 echo y | bench setup nginx
