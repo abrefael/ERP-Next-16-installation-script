@@ -81,23 +81,18 @@ read -p "Please enter new site name: " newSite
 sudo apt update && sudo apt upgrade -y
 sudo apt install git libmariadb-dev-compat redis-server libmariadb-dev mariadb-server mariadb-client pkg-config xvfb libfontconfig cron curl build-essential gcc certbot python3-certbot-nginx ansible -y
 
-read -p "Let's Update the system first. Please hit Enter to start..."
-sudo apt-get update -y
-sudo NEEDRESTART_MODE=a apt-get upgrade -y
-read -p "Now, we'll install some prerequisites. Please hit Enter to start..."
-sudo NEEDRESTART_MODE=a apt -qq install nano git curl -y
-sudo NEEDRESTART_MODE=a apt -qq install python3-dev python3.10-dev python3-pip -y
-sudo NEEDRESTART_MODE=a apt -qq install python3.10-venv -y
-sudo NEEDRESTART_MODE=a apt -qq install cron software-properties-common mariadb-client mariadb-server -y
-sudo NEEDRESTART_MODE=a apt -qq install supervisor redis-server xvfb libfontconfig wkhtmltopdf -y
+
 MARKER_FILE=~/.MariaDB_handled.marker
+
 if [ ! -f "$MARKER_FILE" ]; then
-export mariadb_password;
-sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';";
-sudo mysql -u root -p"$mariadb_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';";
-sudo mysql -u root -p"$mariadb_password" -e "DELETE FROM mysql.user WHERE User='';";
-sudo mysql -u root -p"$mariadb_password" -e "DROP DATABASE IF EXISTS test;DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';";
-sudo mysql -u root -p"$mariadb_password" -e "FLUSH PRIVILEGES;";
+ echo "Let's configure your Mariadb server."
+ prompt_for_mariadb_password
+export mariadb_password
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';"
+sudo mysql -u root -p"$mariadb_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';"
+sudo mysql -u root -p"$mariadb_password" -e "DELETE FROM mysql.user WHERE User='';"
+sudo mysql -u root -p"$mariadb_password" -e "DROP DATABASE IF EXISTS test;DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
+sudo mysql -u root -p"$mariadb_password" -e "FLUSH PRIVILEGES;"
 sudo bash -c 'cat << EOF >> /etc/mysql/my.cnf
 [mysqld]
 character-set-client-handshake = FALSE
@@ -106,11 +101,12 @@ collation-server = utf8mb4_unicode_ci
 
 [mysql]
 default-character-set = utf8mb4
-EOF';
+EOF'
 
-sudo systemctl restart mariadb.service;
- touch "$MARKER_FILE";
+sudo systemctl restart mariadb.service
+ touch "$MARKER_FILE"
 fi
+
 sudo apt remove nodejs npm -y
 sudo apt autoremove -y
 sudo apt update
@@ -131,6 +127,7 @@ bench init frappe-bench --frappe-branch version-16 --python python3.14
 .local/share/uv/tools/frappe-bench/bin/python -m ensurepip
 chmod -R o+rx .
 cd frappe-bench/
+
 export admin_password
 bench new-site "$newSite" --admin-password "$admin_password" --set-default --db-root-username "root" --db-root-password "$mariadb_password"
 
