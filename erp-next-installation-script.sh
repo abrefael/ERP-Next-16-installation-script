@@ -86,7 +86,6 @@ MARKER_FILE=~/.MariaDB_handled.marker
 
 if [ ! -f "$MARKER_FILE" ]; then
  echo "Let's configure your Mariadb server."
- prompt_for_mariadb_password
 export mariadb_password
 sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';"
 sudo mysql -u root -p"$mariadb_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mariadb_password';"
