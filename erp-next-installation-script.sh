@@ -146,6 +146,7 @@ while read URI; do
  echo -e "Any more apps? Enter another URI (otherwise hit Enter):\n"
 done
 read -p "Would you like to continue and install ERPNext? (y/N) " ans
+[ -z "$ans" ] && ans="n"
 if [ $ans = "y" ]; then 
   ans=""
   bench get-app payments
@@ -155,6 +156,7 @@ if [ $ans = "y" ]; then
   bench install-app hrms
 fi
 read -p "Good! Now, is your server ment for production? (Y/n) " ans
+[ -z "$ans" ] && ans="n"
 if [ $ans = "n" ]; then exit 0; fi 
 ans=""
 file="/home/$USER/.local/share/uv/tools/frappe-bench/lib/python3.14/site-packages/bench/playbooks/roles/nginx/tasks/vhosts.yml"
